@@ -68,6 +68,8 @@ export default function Home() {
         setPageSize(jsonResponse.metadata.pageSize);
         setTotalItems(jsonResponse.metadata.totalItems);
       }
+
+      setSearchTerm("");
     } catch (error) {
       console.error("Error fetching advocates:", error);
     } finally {
@@ -84,7 +86,7 @@ export default function Home() {
       <h1 className="font-mollie w-full text-4xl text-center">Solace Advocates</h1>
 
       <div className="flex items-center gap-2">
-        <Search className="w-96" value={searchTerm} onChange={({ target: { value } }) => handleSearch(value)} onSearch={handleSearch} />
+        <Search value={searchTerm} onChange={({ target: { value } }) => handleSearch(value)} onSearch={handleSearch} />
         <Button type="primary" onClick={handleReset}>Reset</Button>
       </div>
 

@@ -81,7 +81,6 @@ const AdvocateTable = ({
         showSizeChanger: true,
         onChange: handlePaginationChange
       }}
-      className="w-full"
     />
   );
 };
