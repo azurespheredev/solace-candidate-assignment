@@ -7,6 +7,10 @@ import type { ColumnsType } from "antd/es/table";
 
 interface AdvocateTableProps {
   advocates: Advocate[];
+  page: number;
+  pageSize: number;
+  totalItems: number;
+  handlePaginationChange: (page: number, pageSize: number) => void;
 }
 
 const columns: ColumnsType<Advocate> = [
@@ -38,7 +42,7 @@ const columns: ColumnsType<Advocate> = [
     render: (specialties: string[]) => (
       <>
         {specialties.map((specialty: string) => (
-          <Tag key={specialty} className="mt-1">{specialty}</Tag>
+          <Tag key={specialty}>{specialty}</Tag>
         ))}
       </>
     ),
@@ -55,9 +59,30 @@ const columns: ColumnsType<Advocate> = [
   }
 ];
 
-const AdvocateTable = ({ advocates }: AdvocateTableProps) => {
+const pageSizeOptions = [10, 20, 50, 100];
+
+const AdvocateTable = ({
+  advocates,
+  page,
+  pageSize,
+  totalItems,
+  handlePaginationChange,
+}: AdvocateTableProps) => {
   return (
-    <Table columns={columns} dataSource={mapAdvocatesWithKey(advocates)} className="w-full" />
+    <Table
+      columns={columns}
+      dataSource={mapAdvocatesWithKey(advocates)}
+      pagination={{
+        position: ["bottomCenter"],
+        current: page,
+        pageSize,
+        pageSizeOptions,
+        total: totalItems,
+        showSizeChanger: true,
+        onChange: handlePaginationChange
+      }}
+      className="w-full"
+    />
   );
 };
 
