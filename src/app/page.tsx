@@ -1,15 +1,18 @@
 "use client";
 
 import { Advocate } from "@/lib/types";
-import React, { useEffect, useRef, useState } from "react";
+import { Button, Input } from "antd";
+import React, { useEffect, useState } from "react";
+import AdvocateTable from "./components/AdvocateTable";
+
+const { Search } = Input;
 
 export default function Home() {
-  const [advocates, setAdvocates] = useState([]);
-  const [filteredAdvocates, setFilteredAdvocates] = useState([]);
-  const searchTermRef = useRef<HTMLSpanElement>(null);
+  const [advocates, setAdvocates] = useState<Advocate[]>([]);
+  const [filteredAdvocates, setFilteredAdvocates] = useState<Advocate[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   useEffect(() => {
-    console.log("Fetching advocates...");
     fetch("/api/advocates")
       .then((response) => response.json())
       .then((jsonResponse) => {
@@ -19,80 +22,39 @@ export default function Home() {
       .catch((error) => console.error("Error fetching advocates:", error));
   }, []);
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const searchTerm = e.target.value.toLowerCase();
+  const handleSearch = (value: string) => {
+    const searchTermValue = value.toLowerCase();
+    setSearchTerm(searchTermValue);
 
-    if (searchTermRef.current) {
-      searchTermRef.current.textContent = searchTerm;
-    }
-
-    console.log("Filtering advocates...");
     const filtered = advocates.filter((advocate: Advocate) => {
       return (
-        advocate.firstName.toLowerCase().includes(searchTerm) ||
-        advocate.lastName.toLowerCase().includes(searchTerm) ||
-        advocate.city.toLowerCase().includes(searchTerm) ||
-        advocate.degree.toLowerCase().includes(searchTerm) ||
-        advocate.specialties.some((s) => s.toLowerCase().includes(searchTerm)) ||
-        advocate.yearsOfExperience.toString().includes(searchTerm)
+        advocate.firstName.toLowerCase().includes(searchTermValue) ||
+        advocate.lastName.toLowerCase().includes(searchTermValue) ||
+        advocate.city.toLowerCase().includes(searchTermValue) ||
+        advocate.degree.toLowerCase().includes(searchTermValue) ||
+        advocate.specialties.some((s) => s.toLowerCase().includes(searchTermValue)) ||
+        advocate.yearsOfExperience.toString().includes(searchTermValue)
       );
     });
 
     setFilteredAdvocates(filtered);
   };
 
-  const onClick = () => {
-    console.log(advocates);
+  const handleReset = () => {
     setFilteredAdvocates(advocates);
-
-    if (searchTermRef.current) {
-      searchTermRef.current.textContent = "";
-    }
+    setSearchTerm("");
   };
 
   return (
-    <main style={{ margin: "24px" }}>
-      <h1>Solace Advocates</h1>
-      <br />
-      <div>
-        <p>Search</p>
-        <p>
-          Searching for: <span ref={searchTermRef}></span>
-        </p>
-        <input style={{ border: "1px solid black" }} onChange={onChange} />
-        <button onClick={onClick}>Reset Search</button>
+    <main className="flex flex-col gap-4 p-4">
+      <h1 className="text-center">Solace Advocates</h1>
+
+      <div className="flex justify-start items-center gap-2">
+        <Search className="w-96" value={searchTerm} onChange={({ target: { value } }) => handleSearch(value)} onSearch={handleSearch} />
+        <Button type="primary" onClick={handleReset}>Reset</Button>
       </div>
-      <br />
-      <table>
-        <thead>
-          <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>City</th>
-            <th>Degree</th>
-            <th>Specialties</th>
-            <th>Years of Experience</th>
-            <th>Phone Number</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredAdvocates.map((advocate: Advocate, index: number) => (
-            <tr key={index}>
-              <td>{advocate.firstName}</td>
-              <td>{advocate.lastName}</td>
-              <td>{advocate.city}</td>
-              <td>{advocate.degree}</td>
-              <td>
-                {advocate.specialties.map((s, idx) => (
-                  <div key={idx}>{s}</div>
-                ))}
-              </td>
-              <td>{advocate.yearsOfExperience}</td>
-              <td>{advocate.phoneNumber}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+
+      <AdvocateTable advocates={filteredAdvocates} />
     </main>
   );
 }
