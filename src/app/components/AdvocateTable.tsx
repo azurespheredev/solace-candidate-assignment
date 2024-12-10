@@ -57,7 +57,7 @@ const columns: ColumnsType<Advocate> = [
 
 const AdvocateTable = ({ advocates }: AdvocateTableProps) => {
   return (
-    <Table columns={columns} dataSource={mapAdvocatesWithKey(advocates)} />
+    <Table columns={columns} dataSource={mapAdvocatesWithKey(advocates)} className="w-full" />
   );
 };
 

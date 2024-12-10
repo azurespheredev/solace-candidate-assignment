@@ -10,7 +10,7 @@ const { Search } = Input;
 export default function Home() {
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
   const [filteredAdvocates, setFilteredAdvocates] = useState<Advocate[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   const fetchAdvocates = async () => {
@@ -57,15 +57,15 @@ export default function Home() {
   };
 
   return (
-    <main className="flex flex-col gap-4 p-4">
-      <h1 className="font-mollie text-4xl text-center">Solace Advocates</h1>
+    <main className="flex flex-col items-start gap-4 p-4">
+      <h1 className="font-mollie w-full text-4xl text-center">Solace Advocates</h1>
 
-      <div className="flex justify-start items-center gap-2">
+      <div className="flex items-center gap-2">
         <Search className="w-96" value={searchTerm} onChange={({ target: { value } }) => handleSearch(value)} onSearch={handleSearch} />
         <Button type="primary" onClick={handleReset}>Reset</Button>
       </div>
 
-      <div className="flex justify-center">
+      <div className="flex justify-center w-full">
         {isLoading ? (
           <Spin size="large" />
         ) : (

@@ -12,6 +12,7 @@
     "seed": "node --loader esbuild-register/loader -r esbuild-register ./src/db/seed/index.ts"
   },
   "dependencies": {
+    "@ant-design/nextjs-registry": "^1.0.2",
     "antd": "^5.22.4",
     "drizzle-orm": "^0.32.1",
     "next": "^14.2.19",
