@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: "MollieGlaston";
+  src: url("/fonts/Mollie_Glaston.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}

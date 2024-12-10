@@ -1,6 +1,7 @@
 "use client";
 
 import { Advocate } from "@/lib/types";
+import { mapAdvocatesWithKey } from "@/lib/utils";
 import { Table, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 
@@ -23,6 +24,7 @@ const columns: ColumnsType<Advocate> = [
     title: "City",
     dataIndex: "city",
     key: "city",
+    width: 136,
   },
   {
     title: "Degree",
@@ -55,7 +57,7 @@ const columns: ColumnsType<Advocate> = [
 
 const AdvocateTable = ({ advocates }: AdvocateTableProps) => {
   return (
-    <Table columns={columns} dataSource={advocates} />
+    <Table columns={columns} dataSource={mapAdvocatesWithKey(advocates)} />
   );
 };
 

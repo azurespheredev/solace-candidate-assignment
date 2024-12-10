@@ -1,25 +1,36 @@
 "use client";
 
+import AdvocateTable from "@/app/components/AdvocateTable";
 import { Advocate } from "@/lib/types";
-import { Button, Input } from "antd";
+import { Button, Input, Spin } from "antd";
 import React, { useEffect, useState } from "react";
-import AdvocateTable from "./components/AdvocateTable";
 
 const { Search } = Input;
 
 export default function Home() {
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
   const [filteredAdvocates, setFilteredAdvocates] = useState<Advocate[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
+  const fetchAdvocates = async () => {
+    setIsLoading(true);
+
+    try {
+      const response = await fetch("/api/advocates");
+      const jsonResponse = await response.json();
+
+      setAdvocates(jsonResponse.data || []);
+      setFilteredAdvocates(jsonResponse.data || []);
+    } catch (error) {
+      console.error("Error fetching advocates:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   useEffect(() => {
-    fetch("/api/advocates")
-      .then((response) => response.json())
-      .then((jsonResponse) => {
-        setAdvocates(jsonResponse.data || []);
-        setFilteredAdvocates(jsonResponse.data || []);
-      })
-      .catch((error) => console.error("Error fetching advocates:", error));
+    fetchAdvocates();
   }, []);
 
   const handleSearch = (value: string) => {
@@ -47,14 +58,20 @@ export default function Home() {
 
   return (
     <main className="flex flex-col gap-4 p-4">
-      <h1 className="text-center">Solace Advocates</h1>
+      <h1 className="font-mollie text-4xl text-center">Solace Advocates</h1>
 
       <div className="flex justify-start items-center gap-2">
         <Search className="w-96" value={searchTerm} onChange={({ target: { value } }) => handleSearch(value)} onSearch={handleSearch} />
         <Button type="primary" onClick={handleReset}>Reset</Button>
       </div>
 
-      <AdvocateTable advocates={filteredAdvocates} />
+      <div className="flex justify-center">
+        {isLoading ? (
+          <Spin size="large" />
+        ) : (
+          <AdvocateTable advocates={filteredAdvocates} />
+        )}
+      </div>
     </main>
   );
 }
