@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Solace Candidate Assignment",
-  description: "Show us what you got",
+  description: "A technical assessment for Solace, created by Dustin Lee",
 };
 
 export default function RootLayout({
