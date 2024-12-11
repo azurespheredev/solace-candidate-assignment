@@ -1,3 +1,4 @@
+import { AntdRegistry } from "@ant-design/nextjs-registry";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -6,7 +7,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Solace Candidate Assignment",
-  description: "Show us what you got",
+  description: "A technical assessment for Solace, created by Dustin Lee",
 };
 
 export default function RootLayout({
@@ -16,7 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <AntdRegistry>
+        <body className={inter.className}>{children}</body>
+      </AntdRegistry>
     </html>
   );
 }
