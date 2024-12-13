@@ -10,7 +10,6 @@ const { Search } = Input;
 
 export default function Home() {
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
-  const [filteredAdvocates, setFilteredAdvocates] = useState<Advocate[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
@@ -22,24 +21,12 @@ export default function Home() {
   const handleSearch = (value: string) => {
     const searchTermValue = value.toLowerCase();
     setSearchTerm(searchTermValue);
-
-    const filtered = advocates.filter((advocate: Advocate) => {
-      return (
-        advocate.firstName.toLowerCase().includes(searchTermValue) ||
-        advocate.lastName.toLowerCase().includes(searchTermValue) ||
-        advocate.city.toLowerCase().includes(searchTermValue) ||
-        advocate.degree.toLowerCase().includes(searchTermValue) ||
-        advocate.specialties.some((s) => s.toLowerCase().includes(searchTermValue)) ||
-        advocate.yearsOfExperience.toString().includes(searchTermValue)
-      );
-    });
-
-    setFilteredAdvocates(filtered);
+    fetchAdvocates({ page, pageSize, searchTerm: searchTermValue });
   };
 
   const handleReset = () => {
-    setFilteredAdvocates(advocates);
     setSearchTerm("");
+    fetchAdvocates({ page, pageSize, searchTerm: "" });
   };
 
   const handlePaginationChange = (page: number, pageSize: number) => {
@@ -51,16 +38,16 @@ export default function Home() {
   const fetchAdvocates = async ({
     page = DEFAULT_PAGE,
     pageSize = DEFAULT_PAGE_SIZE,
+    searchTerm = "",
   }) => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`/api/advocates?page=${page}&pageSize=${pageSize}`);
+      const response = await fetch(`/api/advocates?page=${page}&pageSize=${pageSize}&searchTerm=${searchTerm}`);
       const jsonResponse = await response.json();
 
       if (jsonResponse.data) {
         setAdvocates(jsonResponse.data);
-        setFilteredAdvocates(jsonResponse.data);
       }
 
       if (jsonResponse.metadata) {
@@ -68,8 +55,6 @@ export default function Home() {
         setPageSize(jsonResponse.metadata.pageSize);
         setTotalItems(jsonResponse.metadata.totalItems);
       }
-
-      setSearchTerm("");
     } catch (error) {
       console.error("Error fetching advocates:", error);
     } finally {
@@ -86,14 +71,14 @@ export default function Home() {
       <h1 className="font-mollie w-full text-4xl text-center">Solace Advocates</h1>
 
       <div className="flex items-center gap-2">
-        <Search value={searchTerm} onChange={({ target: { value } }) => handleSearch(value)} onSearch={handleSearch} />
+        <Search value={searchTerm} onChange={({ target: { value } }) => setSearchTerm(value)} onSearch={handleSearch} />
         <Button type="primary" onClick={handleReset}>Reset</Button>
       </div>
 
       <div className="flex justify-center w-full">
         <Spin spinning={isLoading}>
           <AdvocateTable
-            advocates={filteredAdvocates}
+            advocates={advocates}
             page={page}
             pageSize={pageSize}
             totalItems={totalItems}
